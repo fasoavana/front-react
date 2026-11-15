@@ -1,3 +1,18 @@
+
+// Simulation de l'API IntersectionObserver pour jsdom.
+globalThis.IntersectionObserver ??= class MockIntersectionObserver {
+  constructor(callback) {
+    this.callback = callback;
+  }
+
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+};
+
 import React from 'react';
 import { beforeEach, afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor, cleanup } from '@testing-library/react';

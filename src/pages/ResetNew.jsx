@@ -6,5 +6,5 @@ export default function ResetNew(){const [sp]=useSearchParams();const [email,set
   return <div className="na-wrap account-page"><SEO title="Réinitialiser le mot de passe"/><h1>Mot de passe <em>oublié ?</em></h1><form className="account-form" onSubmit={submit}>
     {token&&uid?<label>Nouveau mot de passe<input type="password" minLength={8} required value={password} onChange={e=>setPassword(e.target.value)}/></label>:
       <label>Adresse e-mail<input type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label>}
-    {error&&<p className="alert">{error}</p>}{msg&&<p className="success-message">{msg}</p>}<button className="na-btn gold">Envoyer</button></form></div>
+    {error&&<p className="alert">{error}</p>}{msg&&<p className="success-message">{msg}</p>}<button type="submit" className="na-btn gold">Envoyer</button></form></div>
 }
