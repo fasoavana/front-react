@@ -1,9 +1,8 @@
-node_modules/
-dist/
+# Never commit deployment secrets; ValaDeploy creates .env at build-time.
 .env
 .env.*
 !.env.example
-*.log
-.DS_Store
-quality/*
-!quality/lcov.info
+node_modules/
+.venv/
+__pycache__/
+*.py[cod]

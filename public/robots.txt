@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /admin-panel
+Disallow: /mon-compte
+Disallow: /commande
+Disallow: /suivi/
+Disallow: /django-admin/
+Disallow: /api/
+Sitemap: /sitemap.xml

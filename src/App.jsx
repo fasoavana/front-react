@@ -1,50 +1,23 @@
-import { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import ProductDetail from "./pages/ProductDetail";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Information from "./pages/Information";
-import NotFound from "./pages/NotFound";
-import { useCart } from "./context/CartContext";
-import { Check, X } from "lucide-react";
-
-export default function App() {
-  const { pathname } = useLocation();
-  const { notice, dismissNotice } = useCart();
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "instant" });
-  }, [pathname]);
-  return (
-    <>
-      <a className="skip-link" href="#main">
-        Aller au contenu
-      </a>
-      <Navbar />
-      <main id="main" tabIndex={-1}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/boutique" element={<Shop />} />
-          <Route path="/produit/:id" element={<ProductDetail />} />
-          <Route path="/panier" element={<Cart />} />
-          <Route path="/commande" element={<Checkout />} />
-          <Route path="/informations/:page" element={<Information />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </main>
-      <Footer />
-      {notice && (
-        <div className="toast" role="status">
-          <Check size={19} />
-          <span>{notice}</span>
-          <button onClick={dismissNotice} aria-label="Fermer la notification">
-            <X size={17} />
-          </button>
-        </div>
-      )}
-    </>
-  );
-}
+import { Routes, Route } from 'react-router-dom';
+import Layout from './ui/Layout';
+import HomeNew from './pages/HomeNew';
+import ShopNew from './pages/ShopNew';
+import ProductNew from './pages/ProductNew';
+import CartNew from './pages/CartNew';
+import CheckoutNew from './pages/CheckoutNew';
+import TrackNew from './pages/TrackNew';
+import InformationNew from './pages/InformationNew';
+import AdminNew from './pages/AdminNew';
+import AccountNew from './pages/AccountNew';
+import ResetNew from './pages/ResetNew';
+import NotFoundNew from './pages/NotFoundNew';
+import { StoreProvider } from './context/StoreContext';
+import './new-arrivals.css';
+export default function App(){return <StoreProvider><Routes><Route element={<Layout/>}>
+  <Route index element={<HomeNew/>}/><Route path="boutique" element={<ShopNew/>}/>
+  <Route path="produit/:slug" element={<ProductNew/>}/><Route path="panier" element={<CartNew/>}/>
+  <Route path="commande" element={<CheckoutNew/>}/><Route path="suivi" element={<TrackNew/>}/><Route path="suivi/:token" element={<TrackNew/>}/>
+  <Route path="informations/:page" element={<InformationNew/>}/><Route path="admin-panel" element={<AdminNew/>}/>
+  <Route path="mon-compte" element={<AccountNew/>}/><Route path="reinitialiser" element={<ResetNew/>}/>
+  <Route path="*" element={<NotFoundNew/>}/>
+  </Route></Routes></StoreProvider>}

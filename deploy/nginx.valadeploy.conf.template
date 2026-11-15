@@ -1,0 +1,38 @@
+resolver 127.0.0.11 valid=10s ipv6=off;
+map $http_x_forwarded_proto $na_forwarded_proto {
+  default $http_x_forwarded_proto;
+  '' $scheme;
+}
+map $http_user_agent $na_social_crawler {
+  default 0;
+  ~*(facebookexternalhit|Facebot|WhatsApp|Twitterbot|TelegramBot|LinkedInBot|Pinterestbot|Slackbot|Discordbot|Googlebot|Bingbot) 1;
+}
+server {
+  set $na_backend http://__NA_BACKEND_HOST__:8000;
+  listen 8080;
+  root /usr/share/nginx/html;
+  index index.html;
+  server_tokens off;
+  client_max_body_size 10M;
+  add_header X-Content-Type-Options nosniff always;
+  add_header Referrer-Policy strict-origin-when-cross-origin always;
+  location = /robots.txt { proxy_pass $na_backend; proxy_set_header Host $host; }
+  location = /sitemap.xml { proxy_pass $na_backend; proxy_set_header Host $host; }
+  location /api/ { proxy_pass $na_backend; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $na_forwarded_proto; proxy_set_header X-Real-IP $remote_addr; proxy_read_timeout 60s; }
+  location /django-admin/ { proxy_pass $na_backend; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $na_forwarded_proto; }
+  location /static/ { proxy_pass $na_backend; proxy_set_header Host $host; }
+  location /media/catalog/ { proxy_pass $na_backend; proxy_set_header Host $host; proxy_set_header X-Forwarded-Proto $na_forwarded_proto; }
+  location /media/private/ { return 404; }
+  # Bots get server-rendered product tags, humans keep React SPA.
+  location ~ ^/produit/[a-zA-Z0-9-]+/?$ {
+    error_page 418 = @social_product;
+    if ($na_social_crawler) { return 418; }
+    try_files $uri /index.html;
+  }
+  location @social_product {
+    proxy_pass $na_backend;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $na_forwarded_proto;
+  }
+  location / { try_files $uri $uri/ /index.html; }
+}
