@@ -1,8 +1,8 @@
 # Dedicated root-build context for ValaDeploy. Never copy .env into any layer.
 FROM node:24-alpine3.24 AS build
 WORKDIR /app
-COPY package.json ./package.json
-RUN npm install --no-audit --no-fund
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
 COPY index.html ./index.html
 COPY vite.config.js postcss.config.js tailwind.config.js ./
 COPY public/ ./public/
@@ -14,6 +14,7 @@ COPY --from=build /app/dist/ /usr/share/nginx/html/
 COPY deploy/nginx.valadeploy.conf.template /etc/new-arrivals/nginx.conf.template
 COPY deploy/nginx-start.sh /usr/local/bin/new-arrivals-start
 RUN chmod +x /usr/local/bin/new-arrivals-start
+USER nginx
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=4s --start-period=12s --retries=3 \
  CMD wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1
